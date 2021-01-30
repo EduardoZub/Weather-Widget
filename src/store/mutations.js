@@ -15,8 +15,8 @@ export default {
       weatherMain: data.weather[0].main,
       weatherDescription: data.weather[0].description
     }
-    state.widgetsConfig.unshift(widget)
-    state.citiesIds.unshift(widget.id)
+    state.widgetsConfig.push(widget)
+    state.citiesIds.push(widget.id)
   },
   deleteWidget (state, id) {
     state.widgetsConfig = state.widgetsConfig.filter(w => w.id !== id)
@@ -29,6 +29,9 @@ export default {
   setErrorMessage (state, errorMessage) {
     state.errorMessage.isActive = true
     state.errorMessage.message = errorMessage
-    return state.errorMessage
+  },
+  updateWidgetsConfig (state, data) {
+    state.widgetsConfig = data
+    state.citiesIds = data.map(elem => elem.id)
   }
 }

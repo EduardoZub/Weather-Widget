@@ -11,17 +11,23 @@
         @click="close()"/>
     </div>
 
-    <ul v-if="widgetsList.length">
-        <li class="weather-widget-card-settings__sities" v-for="widget in widgetsList" :key="widget.id">
-          <div class="city">
-            <div class="city-content">
-              <font-awesome-icon class="drop-icon" icon="arrows-alt" />
-              <div>{{widget.cityName}} <span>{{widget.country}}</span></div>
-            </div>
-            <font-awesome-icon class="delete-icon" icon="trash" @click="onDelete(widget.id)"/>
+    <draggable
+      v-if="widgetsList.length"
+      class="widgets-group"
+      tag="ul"
+      v-model="widgetsList"
+      v-bind="dragOptions">
+
+      <li class="widgets-group__sities" v-for="widget in widgetsList" :key="widget.id">
+        <div class="city">
+          <div class="city-content">
+            <font-awesome-icon class="drop-icon" icon="arrows-alt" @mouseenter="onMouseenter" @mouseleave="onMouseleave"/>
+            <div>{{widget.cityName}} <span>{{widget.country}}</span></div>
           </div>
-        </li>
-    </ul>
+          <font-awesome-icon class="delete-icon" icon="trash" @click="onDelete(widget.id)"/>
+        </div>
+      </li>
+    </draggable>
 
     <div v-else class="no-cities">
       No cities
@@ -61,31 +67,57 @@
 <script>
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import AlertWindow from './AlertWindow.vue'
+import draggable from 'vuedraggable'
 
 export default {
   name: 'WeatherWidgetSettings',
   components: {
-    AlertWindow
+    AlertWindow,
+    draggable
   },
   data () {
     return {
       cityName: '',
       deletItemId: null,
       showAlert: false,
-      isExist: false
+      isExist: false,
+      options: {
+        animation: 200,
+        group: 'widgets',
+        disabled: true
+      }
     }
   },
   props: {
-    widgetsList: {
+    widgets: {
       type: Array,
       default: () => {
         return []
       }
     }
   },
-  computed: mapGetters(['widgetsConfig', 'getErrorMessage']),
+  computed: {
+    ...mapGetters(['widgetsConfig', 'getErrorMessage']),
+    widgetsList: {
+      get: function () {
+        return this.widgets
+      },
+      set: function (values) {
+        this.updateWidgetsConfig(values)
+        this.updateLocalStorege()
+      }
+    },
+    dragOptions: {
+      get: function () {
+        return this.options
+      },
+      set: function (disabled) {
+        this.options.disabled = disabled
+      }
+    }
+  },
   methods: {
-    ...mapMutations(['deleteWidget', 'addNewCity', 'updateLocalStorege']),
+    ...mapMutations(['deleteWidget', 'addNewCity', 'updateLocalStorege', 'updateWidgetsConfig']),
     ...mapActions(['getWeatherByName']),
     onDelete (id) {
       this.deletItemId = id
@@ -102,7 +134,8 @@ export default {
       this.getErrorMessage.isActive = false
     },
     addNewCity () {
-      if (this.cityName.trim() && !this.widgetsConfig.some(el => el.cityName.toLowerCase() === this.cityName.toLowerCase())) {
+      if (!this.cityName.trim()) { return }
+      if (!this.widgetsConfig.some(el => el.cityName.toLowerCase() === this.cityName.toLowerCase())) {
         this.getWeatherByName(this.cityName)
         this.cityName = ''
       } else {
@@ -113,6 +146,12 @@ export default {
     },
     close () {
       this.$emit('close')
+    },
+    onMouseenter () {
+      this.dragOptions = false
+    },
+    onMouseleave () {
+      this.dragOptions = true
     }
   }
 }
@@ -193,7 +232,7 @@ ul {
 
       .drop-icon {
         margin-right: 10px;
-        cursor: pointer;
+        cursor: move;
       }
     }
   }

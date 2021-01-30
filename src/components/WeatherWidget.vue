@@ -30,7 +30,7 @@
     </div>
 
     <WeatherWidgetSettings
-      :widgetsList="widgetsConfig"
+      :widgets="widgetsConfig"
       v-if="showSettings"
       @close="showSettings = false"/>
   </div>

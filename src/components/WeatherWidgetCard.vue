@@ -11,7 +11,7 @@
     <div class="weather-widget-card__main-data">
       <img :src="`http://openweathermap.org/img/wn/${widget.iconCode}@2x.png`" alt="weather icon">
       <div class="weather-description">
-        <div class="temperature">{{widget.temp}} &#8451;</div>
+        <div class="temperature">{{widget.temp | roundUp}} &#8451;</div>
         <div class="weather-main">{{widget.weatherMain}}</div>
         <small>{{widget.weatherDescription}}</small>
       </div>
@@ -19,7 +19,7 @@
 
     <div class="weather-widget-card__additional-data">
       <ul>
-        <li><span>Feels like:</span> <span>{{widget.feels_like}}</span></li>
+        <li><span>Feels like:</span> <span>{{widget.feels_like | roundUp}}</span></li>
         <li><span>Humidity:</span> <span>{{widget.humidity}}</span></li>
         <li><span>Pressure:</span> <span>{{widget.pressure}}</span></li>
       </ul>
@@ -36,7 +36,11 @@ export default {
       default: null
     }
   },
-  components: {
+  filters: {
+    roundUp: function (value) {
+      if (!value || typeof value !== 'number') { return value }
+      return Math.round(value)
+    }
   }
 }
 </script>
