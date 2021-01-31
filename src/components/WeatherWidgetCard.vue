@@ -46,14 +46,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/common';
 
 ul {
-  list-style: none;
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  padding: 0;
-  margin: 0;
 
   li {
     width: 100%;
@@ -70,8 +68,8 @@ ul {
   width: 270px;
   padding: 20px;
   border-radius: 10px;
-  background-color: #11698e;
-  color: #fff;
+  background-color: $main-light;
+  color: $white;
   margin-bottom: 10px;
 
   &__location {

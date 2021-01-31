@@ -24,6 +24,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/common';
+
 .alert-window {
   width: 100%;
   position: absolute;
@@ -46,13 +48,13 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #e7d9ea;
-  border: 2px solid #fff;
+  background-color: $light;
+  border: 2px solid $white;
 }
 
 .alert-window-message {
   font-size: 19px;
-  color: #11698e;
+  color: $main-light;
   font-weight: bold;
 }
 
@@ -73,13 +75,13 @@ export default {
     text-align: center;
     margin-right: 12px;
     padding: 5px 10px;
-    color: #11698e;
+    color: $main-light;
     cursor: pointer;
     border-bottom: 1px solid transparent;
     font-weight: 900;
 
     &:hover {
-      border-bottom: 1px solid #fff;
+      border-bottom: 1px solid $white;
     }
   }
 }

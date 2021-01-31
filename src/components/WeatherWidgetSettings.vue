@@ -21,9 +21,15 @@
       <li class="widgets-group__sities" v-for="widget in widgetsList" :key="widget.id">
         <div class="city">
           <div class="city-content">
-            <font-awesome-icon class="drop-icon" icon="arrows-alt" @mouseenter="onMouseenter" @mouseleave="onMouseleave"/>
+            <font-awesome-icon
+              class="drop-icon"
+              icon="arrows-alt"
+              @mouseenter="onMouseenter"
+              @mouseleave="onMouseleave"/>
+
             <div>{{widget.cityName}} <span>{{widget.country}}</span></div>
           </div>
+
           <font-awesome-icon class="delete-icon" icon="trash" @click="onDelete(widget.id)"/>
         </div>
       </li>
@@ -33,9 +39,28 @@
       No cities
     </div>
 
-    <form class="weather-widget-card-settings__new-city" @submit.prevent="">
-      <input class="new-city-input" type="text" placeholder="Add Location" v-model="cityName">
-      <button class="add-button" @click="addNewCity">Add</button>
+    <form class="add-new-city" @submit.prevent="">
+      <div class="add-new-city-input-wrap">
+          <input
+            class="add-new-city-input"
+            type="text"
+            placeholder="Add Location"
+            v-model.trim="cityName"
+            v-on:input="onInputName($event.target.value)">
+
+        <button class="add-button" @click="addNewCity">Add</button>
+      </div>
+
+      <ul class="autocompleteList" v-if="autocompleteList">
+        <li
+          class="autocompleteList__item"
+          v-for="(autocompleteItem, index) in autocompleteList"
+          :key="index"
+          @click="onAutocompleteChange(autocompleteItem)">
+
+          <span>{{autocompleteItem}}</span>
+        </li>
+      </ul>
     </form>
 
     <AlertWindow
@@ -68,6 +93,8 @@
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import AlertWindow from './AlertWindow.vue'
 import draggable from 'vuedraggable'
+import localStoregeService from '../services/local-storage-service'
+import _ from 'lodash'
 
 export default {
   name: 'WeatherWidgetSettings',
@@ -97,16 +124,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['widgetsConfig', 'getErrorMessage']),
+    ...mapGetters(['widgetsConfig', 'getErrorMessage', 'autocompleteList']),
+
     widgetsList: {
       get: function () {
         return this.widgets
       },
       set: function (values) {
         this.updateWidgetsConfig(values)
-        this.updateLocalStorege()
+        localStoregeService.updateOrderLocalStoregeItem(values)
       }
     },
+
     dragOptions: {
       get: function () {
         return this.options
@@ -117,24 +146,28 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['deleteWidget', 'addNewCity', 'updateLocalStorege', 'updateWidgetsConfig']),
-    ...mapActions(['getWeatherByName']),
+    ...mapMutations(['deleteWidget', 'addNewCity', 'updateWidgetsConfig']),
+    ...mapActions(['getWeatherByName', 'getCitiesAutocomplete']),
+
     onDelete (id) {
       this.deletItemId = id
       this.showAlert = true
     },
+
     onAgree () {
       this.deleteWidget(this.deletItemId)
-      this.updateLocalStorege()
+      localStoregeService.deleteIdFromLocalStoregeItem(this.deletItemId)
       this.showAlert = false
     },
+
     onClose () {
       this.showAlert = false
       this.isExist = false
       this.getErrorMessage.isActive = false
     },
+
     addNewCity () {
-      if (!this.cityName.trim()) { return }
+      if (!this.cityName) { return }
       if (!this.widgetsConfig.some(el => el.cityName.toLowerCase() === this.cityName.toLowerCase())) {
         this.getWeatherByName(this.cityName)
         this.cityName = ''
@@ -144,25 +177,33 @@ export default {
         this.showAlert = true
       }
     },
+
     close () {
       this.$emit('close')
     },
+
     onMouseenter () {
       this.dragOptions = false
     },
+
     onMouseleave () {
       this.dragOptions = true
+    },
+
+    onInputName: _.debounce(function (name) {
+      // this.getCitiesAutocomplete(name)
+    }, 300),
+
+    onAutocompleteChange (cityName) {
+      debugger
+      this.cityName = cityName
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+@import '@/styles/common';
 
 .weather-widget-card-settings {
   display: flex;
@@ -174,8 +215,8 @@ ul {
   width: 100%;
   padding: 30px 20px;
   border-radius: 5px;
-  background-color: #19456b;
-  box-shadow: 0px 5px 20px -4px #000;
+  background-color: $main;
+  box-shadow: 0px 5px 20px -4px $darck;
   z-index: 9;
 
   &__title {
@@ -210,7 +251,7 @@ ul {
     transition: color .2s;
 
     &:hover {
-      color: #e24040;
+      color: $red;
       transition: color .2s;
     }
   }
@@ -220,9 +261,9 @@ ul {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    background-color: #e7d9ea;
+    background-color: $light;
     padding: 10px;
-    color: #19456b;
+    color: $main;
     margin-bottom: 10px;
 
     .city-content {
@@ -236,38 +277,62 @@ ul {
       }
     }
   }
+}
+.add-new-city {
+  position: relative;
+  width: 100%;
+  margin-top: 20px;
 
-  &__new-city {
+  .add-new-city-input-wrap {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
+  }
 
-    .new-city-input {
-      width: 100%;
-      padding: 10px;
-      outline: none;
-    }
+  .add-new-city-input {
+    width: 100%;
+    padding: 10px;
+    outline: none;
+  }
 
-    .add-button {
-      font-weight: bold;
-      font-size: 15px;
-      margin-left: 10px;
-      padding: 9px 15px;
-      cursor: pointer;
-      background-color: #fff;
-      color: #11698e;
-      border: 1px solid #fff;
-      outline: none;
+  .add-button {
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 10px;
+    padding: 9px 15px;
+    cursor: pointer;
+    background-color: $white;
+    color: $main-light;
+    border: 1px solid $white;
+    outline: none;
+    transition: background-color .3s, color .3s, border .3s;
+
+    &:hover {
+      color: $white;
+      background-color: $main-light;
+      border: 1px solid $white;
       transition: background-color .3s, color .3s, border .3s;
+    }
+  }
+}
 
-      &:hover {
-        color: #fff;
-        background-color: #11698e;
-        border: 1px solid #fff;
-        transition: background-color .3s, color .3s, border .3s;
-      }
+.autocompleteList {
+  position: absolute;
+  top: 47px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-color: $white;
+
+  &__item {
+    width: 100%;
+    color: $main;
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $light;
     }
   }
 }

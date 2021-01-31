@@ -2,6 +2,7 @@ export default {
   addNewCity (state, city) {
     state.citysNames.unshift(city)
   },
+
   setWidgetsConfig (state, data) {
     const widget = {
       id: data.id,
@@ -16,22 +17,24 @@ export default {
       weatherDescription: data.weather[0].description
     }
     state.widgetsConfig.push(widget)
-    state.citiesIds.push(widget.id)
   },
+
   deleteWidget (state, id) {
     state.widgetsConfig = state.widgetsConfig.filter(w => w.id !== id)
-    state.citiesIds = state.citiesIds.filter(i => i !== id)
   },
-  updateLocalStorege (state) {
-    const parsed = state.citiesIds.join()
-    localStorage.setItem('weatherWidgetConfig', parsed)
-  },
+
   setErrorMessage (state, errorMessage) {
     state.errorMessage.isActive = true
     state.errorMessage.message = errorMessage
   },
+
   updateWidgetsConfig (state, data) {
     state.widgetsConfig = data
-    state.citiesIds = data.map(elem => elem.id)
+  },
+
+  setAutocompleteList (state, list) {
+    debugger
+    state.autocompleteList = list
+    debugger
   }
 }

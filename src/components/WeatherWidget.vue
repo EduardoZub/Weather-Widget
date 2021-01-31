@@ -40,6 +40,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import WeatherWidgetCard from './WeatherWidgetCard.vue'
 import WeatherWidgetSettings from './WeatherWidgetSettings.vue'
+import localStoregeService from '../services/local-storage-service'
 
 export default {
   name: 'WeatherWidget',
@@ -52,21 +53,17 @@ export default {
     WeatherWidgetCard,
     WeatherWidgetSettings
   },
-  computed: mapGetters(['widgetsConfig', 'getLSCitiesId']),
+  computed: mapGetters(['widgetsConfig']),
   methods: mapActions(['fetchWeatherByCitiesId']),
   created () {
-    const citiesIds = this.getLSCitiesId
+    const citiesIds = localStoregeService.getLocalStorageItem()
     if (citiesIds && citiesIds.length) { this.fetchWeatherByCitiesId(citiesIds) }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+@import '@/styles/common';
 
 .weather-widget {
   position: relative;
@@ -75,16 +72,16 @@ ul {
   max-width: fit-content;
   padding: 15px;
   border-radius: 10px;
-  background-color: #16c79a;
-  color: #fff;
-  box-shadow: 0px 0px 9px -1px #11698e;
+  background-color: $green;
+  color: $white;
+  box-shadow: 0px 0px 9px -1px $main-light;
 }
 
 .add-button {
-  border: solid 1px  #fff;
+  border: solid 1px  $white;
   padding: 8px 15px;
-  background-color: #11698e;
-  color: #fff;
+  background-color: $main-light;
+  color: $white;
   outline: none;
   font-weight: bold;
   cursor: pointer;
@@ -92,9 +89,9 @@ ul {
   transition: background-color .3s, color .3s, border .3s;
 
   &:hover {
-    border: solid 1px  #11698e;
-    color: #11698e;
-    background-color: #e7d9ea;
+    border: solid 1px  $main-light;
+    color: $main-light;
+    background-color: $light;
     transition: background-color .3s, color .3s, border .3s;
   }
 }
@@ -102,7 +99,7 @@ ul {
 .no-cities {
   font-weight: bold;
   padding: 15px 15px;
-  background-color: #11698e;
+  background-color: $main-light;
   border-radius: 5px;
   display: flex;
   flex-direction: row;
@@ -125,11 +122,11 @@ ul {
 
   .gear-icon {
     cursor: pointer;
-    color: #fff;
+    color: $white;
     transition: color .3s;
 
     &:hover {
-      color: #11698e;
+      color: $main-light;
       transition: color .3s;
     }
   }
