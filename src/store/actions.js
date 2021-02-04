@@ -22,7 +22,7 @@ export default {
         })
       })
       .catch(err => {
-        console.error('ERROR', err)
+        if (err && err.message) { ctx.commit('setErrorMessage', err.message) }
       })
   },
 
@@ -43,27 +43,4 @@ export default {
         ctx.commit('setErrorMessage', err.response.data.message)
       })
   }
-
-  // getCitiesAutocomplete (ctx, search) {
-  // if (!search) { return }
-  // axios
-  //   .get(urlCitiesAutocomplete, { params: { search } })
-  //   .then(cities => {
-  //     console.log(cities.data._embedded['city:search-result'])
-  //     debugger
-  //     ctx.commit('setAutocompleteList', cities.data._embedded['city:search-result'])
-  //   })
-  //   const params = {
-  //     libraries: 'places',
-  //     key: 'AIzaSyDz8K45rQSIqan5kQHQ2vMBX3ImjeoAfeA'
-  //   }
-  //   axios
-  //     // .get('https://maps.googleapis.com/maps/api/geocode/jsone/', { params })
-  //     .get('https://maps.googleapis.com/maps/api/js/', { params })
-  //     .then(cities => {
-  //       console.log(cities.data._embedded['city:search-result'])
-  //       debugger
-  //       ctx.commit('setAutocompleteList', cities.data._embedded['city:search-result'])
-  //     })
-  // }
 }

@@ -22,9 +22,7 @@
     <div v-else class="no-cities">
       No cities,
       <button @click="showSettings = true" class="add-button">
-        <font-awesome-icon
-          class="city-icon"
-          icon="map-marker-alt"/>
+        <font-awesome-icon class="city-icon" icon="map-marker-alt"/>
           Add city
       </button>
     </div>
@@ -57,7 +55,7 @@ export default {
   methods: mapActions(['fetchWeatherByCitiesId']),
   created () {
     const citiesIds = localStoregeService.getLocalStorageItem()
-    if (citiesIds && citiesIds.length) { this.fetchWeatherByCitiesId(citiesIds) }
+    if (citiesIds) { this.fetchWeatherByCitiesId(citiesIds) }
   }
 }
 </script>

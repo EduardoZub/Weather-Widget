@@ -1,6 +1,6 @@
 <template>
   <div class="weather-widget-card-settings">
-    <div class="weather-widget-card-settings__title">
+    <div class="weather-widget-card-settings__header">
       <span>
         <font-awesome-icon class="settings-icon" icon="sliders-h" />
         Settings
@@ -27,7 +27,9 @@
               @mouseenter="onMouseenter"
               @mouseleave="onMouseleave"/>
 
-            <div>{{widget.cityName}} <span>{{widget.country}}</span></div>
+            <div>{{widget.cityName}}
+              <span>{{widget.country}}</span>
+            </div>
           </div>
 
           <font-awesome-icon class="delete-icon" icon="trash" @click="onDelete(widget.id)"/>
@@ -40,27 +42,13 @@
     </div>
 
     <form class="add-new-city" @submit.prevent="">
-      <div class="add-new-city-input-wrap">
-          <input
-            class="add-new-city-input"
-            type="text"
-            placeholder="Add Location"
-            v-model.trim="cityName"
-            v-on:input="onInputName($event.target.value)">
+      <input
+        class="add-new-city-input"
+        type="text"
+        placeholder="Add Location"
+        v-model.trim="cityName">
 
-        <button class="add-button" @click="addNewCity">Add</button>
-      </div>
-
-      <ul class="autocompleteList" v-if="autocompleteList">
-        <li
-          class="autocompleteList__item"
-          v-for="(autocompleteItem, index) in autocompleteList"
-          :key="index"
-          @click="onAutocompleteChange(autocompleteItem)">
-
-          <span>{{autocompleteItem}}</span>
-        </li>
-      </ul>
+      <button class="add-button" @click="addNewCity">Add</button>
     </form>
 
     <AlertWindow
@@ -94,7 +82,6 @@ import { mapMutations, mapActions, mapGetters } from 'vuex'
 import AlertWindow from './AlertWindow.vue'
 import draggable from 'vuedraggable'
 import localStoregeService from '../services/local-storage-service'
-import _ from 'lodash'
 
 export default {
   name: 'WeatherWidgetSettings',
@@ -124,7 +111,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['widgetsConfig', 'getErrorMessage', 'autocompleteList']),
+    ...mapGetters(['widgetsConfig', 'getErrorMessage']),
 
     widgetsList: {
       get: function () {
@@ -147,7 +134,7 @@ export default {
   },
   methods: {
     ...mapMutations(['deleteWidget', 'addNewCity', 'updateWidgetsConfig']),
-    ...mapActions(['getWeatherByName', 'getCitiesAutocomplete']),
+    ...mapActions(['getWeatherByName']),
 
     onDelete (id) {
       this.deletItemId = id
@@ -188,15 +175,6 @@ export default {
 
     onMouseleave () {
       this.dragOptions = true
-    },
-
-    onInputName: _.debounce(function (name) {
-      // this.getCitiesAutocomplete(name)
-    }, 300),
-
-    onAutocompleteChange (cityName) {
-      debugger
-      this.cityName = cityName
     }
   }
 }
@@ -219,7 +197,7 @@ export default {
   box-shadow: 0px 5px 20px -4px $darck;
   z-index: 9;
 
-  &__title {
+  &__header {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -282,13 +260,10 @@ export default {
   position: relative;
   width: 100%;
   margin-top: 20px;
-
-  .add-new-city-input-wrap {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 
   .add-new-city-input {
     width: 100%;
@@ -313,26 +288,6 @@ export default {
       background-color: $main-light;
       border: 1px solid $white;
       transition: background-color .3s, color .3s, border .3s;
-    }
-  }
-}
-
-.autocompleteList {
-  position: absolute;
-  top: 47px;
-  left: 0;
-  right: 0;
-  width: 100%;
-  background-color: $white;
-
-  &__item {
-    width: 100%;
-    color: $main;
-    padding: 10px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: $light;
     }
   }
 }

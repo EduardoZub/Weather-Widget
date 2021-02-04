@@ -30,11 +30,5 @@ export default {
 
   updateWidgetsConfig (state, data) {
     state.widgetsConfig = data
-  },
-
-  setAutocompleteList (state, list) {
-    debugger
-    state.autocompleteList = list
-    debugger
   }
 }

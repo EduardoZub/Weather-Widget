@@ -3,6 +3,5 @@ export default {
   errorMessage: {
     isActive: false,
     message: null
-  },
-  autocompleteList: []
+  }
 }

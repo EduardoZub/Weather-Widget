@@ -1,11 +1,9 @@
 <template>
   <div class="weather-widget-card">
     <div class="weather-widget-card__location">
-      <div>
-        <font-awesome-icon class="gear-icon" icon="map-marked-alt" />
-        <span class="city">{{widget.cityName}} </span>
-        <span>"{{widget.country}}"</span>
-      </div>
+      <font-awesome-icon class="gear-icon" icon="map-marked-alt" />
+      <span class="city">{{widget.cityName}} </span>
+      <span>"{{widget.country}}"</span>
     </div>
 
     <div class="weather-widget-card__main-data">
@@ -17,13 +15,11 @@
       </div>
     </div>
 
-    <div class="weather-widget-card__additional-data">
-      <ul>
-        <li><span>Feels like:</span> <span>{{widget.feels_like | roundUp}}</span></li>
-        <li><span>Humidity:</span> <span>{{widget.humidity}}</span></li>
-        <li><span>Pressure:</span> <span>{{widget.pressure}}</span></li>
-      </ul>
-    </div>
+    <ul class="weather-widget-card__additional-data">
+      <li><span>Feels like:</span> <span>{{widget.feels_like | roundUp}}</span></li>
+      <li><span>Humidity:</span> <span>{{widget.humidity}}</span></li>
+      <li><span>Pressure:</span> <span>{{widget.pressure}}</span></li>
+    </ul>
   </div>
 </template>
 
@@ -76,7 +72,6 @@ ul {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
     font-size: 19px;
 
     .city {
@@ -92,6 +87,10 @@ ul {
     .weather-icon {
       font-size: 50px;
       margin: 25px 0;
+    }
+
+    small {
+      font-weight: 400;
     }
 
     .weather-description {

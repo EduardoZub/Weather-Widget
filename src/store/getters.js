@@ -5,9 +5,5 @@ export default {
 
   getErrorMessage (state) {
     return state.errorMessage
-  },
-
-  autocompleteList (state) {
-    return state.autocompleteList
   }
 }
